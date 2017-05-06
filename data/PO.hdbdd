@@ -1,0 +1,90 @@
+namespace PurchasesOrders.data;
+
+@Schema: 'SYSTEM'
+context PO {
+
+    type Businesskey  : String(10);
+    type MediumText   : String(30);	
+    type SDate        : LocalDate;
+    type CurrencyT    : String(5);
+    type AmountyT     : Decimal(15, 2);
+    type QuantilyT    : Decimal(13, 3);
+    type UnitT        : String(3);
+    type StatusT      : String(1);
+    type HistoryT {
+         CREATEDY     : Businesskey;
+         CRETEDAT     : SDate;
+         CHANGEDBY    : Businesskey;
+         CHANGEDAT    : SDate;
+    }  
+   
+   	/**
+   	* Header
+   	*/
+   	@Catalog.tableType: #COLUMN
+   	entity Header {
+   	       key PURCHASEORDERID : Businesskey;
+   	       ITEMS               : association[*] to Item on ITEMS.PURCHASEORDERID = PURCHASEORDERID;
+   	       HISTORY             : HistoryT;
+   	       NOTEID              : Businesskey null;
+   	       PARTNER             : Businesskey;
+   	       CURRENCY            : CurrencyT;
+   	       GROSSAMOUNT         : AmountyT;
+   	       NETAMOUNT           : AmountyT;
+   	       TAXAMOUNT           : StatusT;
+   	       LIFECYCLESTATUS     : StatusT;
+   	       APPROVALSTATUS      : StatusT;
+   	       CONFIRMSTATUS       : StatusT;
+   	       ORDERINGSTATUS      : StatusT;
+   	       INVOICINGSTATUS     : StatusT;
+   	}
+
+   	/**
+   	* Item
+   	*/
+   	@Catalog.tableType: #COLUMN
+   	entity Item {
+   	       key PURCHASEORDERID   : Businesskey;
+   	       key PURCHASEORDERITEM : Businesskey;
+   	       HEADER                : association[1] to Header on HEADER.PURCHASEORDERID = PURCHASEORDERID;
+   	       PRODUCT               : association to Product;
+   	       NOTEID                : Businesskey;
+   	       CURERNCY              : CurrencyT;
+   	       GROSSAMOUNT           : AmountyT;
+   	       NETAMOUNT             : AmountyT;
+   	       TAXAMOUNT             : AmountyT;
+   	       QUANTITY              : QuantilyT;
+   	       QUANTITYUNIT          : UnitT;
+   	       DELIVERYDATE          : SDate;   
+   	}
+   	
+   /**
+   	* Product entity
+   	*/ 	
+   	@Catalog.tableType: #COLUMN
+   	entity Product {
+       key PRODUCTID   : Businesskey;
+           DESCRIPTION : MediumText;
+           UNITMEASURE : UnitT;
+           RELEASEDATE : SDate;
+   	}
+   	
+   	
+   /**
+   	* Item view
+   	*/
+   	define view ItemView as select from Item
+   	{
+   	PURCHASEORDERID    as "PuchaseOrderItemId",
+   	PURCHASEORDERITEM  as "ItemPos",
+   	HEADER.PARTNER     as "PartnerId",
+   	CURERNCY           as "CurrencyCode", 
+   	GROSSAMOUNT        as "GrossAmount",  
+   	NETAMOUNT          as "NetAmount", 
+   	TAXAMOUNT          as "TaxAmount", 
+   	QUANTITY           as "Quantity", 
+   	QUANTITYUNIT       as "QuantityUnit", 
+   	DELIVERYDATE       as "DeliveryDate" 
+   	};
+   	
+};
