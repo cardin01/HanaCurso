@@ -27,11 +27,11 @@ context PO {
    	       ITEMS               : association[*] to Item on ITEMS.PURCHASEORDERID = PURCHASEORDERID;
    	       HISTORY             : HistoryT;
    	       NOTEID              : Businesskey null;
-   	       PARTNER             : Businesskey;
+   	       PARTNER             : association to Partner;
    	       CURRENCY            : CurrencyT;
    	       GROSSAMOUNT         : AmountyT;
    	       NETAMOUNT           : AmountyT;
-   	       TAXAMOUNT           : StatusT;
+   	       TAXAMOUNT           : AmountyT;
    	       LIFECYCLESTATUS     : StatusT;
    	       APPROVALSTATUS      : StatusT;
    	       CONFIRMSTATUS       : StatusT;
@@ -69,22 +69,39 @@ context PO {
            RELEASEDATE : SDate;
    	}
    	
+      /**
+   	* User entity
+   	*/
+   	@Catalog.tableType: #COLUMN
+   	entity User {
+   	   key USEIRD   : Businesskey;
+   	       NAME     : MediumText;
+   	}
+   
+   /**
+   	* Partner entity
+   	*/
+   	@Catalog.tableType: #COLUMN
+   	entity Partner {
+   	   key PARTNERID : Businesskey;
+   	       NAME      : MediumText;
+   	}
    	
    /**
    	* Item view
    	*/
    	define view ItemView as select from Item
    	{
-   	PURCHASEORDERID    as "PuchaseOrderItemId",
-   	PURCHASEORDERITEM  as "ItemPos",
-   	HEADER.PARTNER     as "PartnerId",
-   	CURERNCY           as "CurrencyCode", 
-   	GROSSAMOUNT        as "GrossAmount",  
-   	NETAMOUNT          as "NetAmount", 
-   	TAXAMOUNT          as "TaxAmount", 
-   	QUANTITY           as "Quantity", 
-   	QUANTITYUNIT       as "QuantityUnit", 
-   	DELIVERYDATE       as "DeliveryDate" 
+   	PURCHASEORDERID          as "PuchaseOrderItemId",
+   	PURCHASEORDERITEM        as "ItemPos",
+   	HEADER.PARTNER.PARTNERID as "PartnerId",
+   	CURERNCY                 as "CurrencyCode", 
+   	GROSSAMOUNT              as "GrossAmount",  
+   	NETAMOUNT                as "NetAmount", 
+   	TAXAMOUNT                as "TaxAmount", 
+   	QUANTITY                 as "Quantity", 
+   	QUANTITYUNIT             as "QuantityUnit", 
+   	DELIVERYDATE             as "DeliveryDate" 
    	};
    	
 };
