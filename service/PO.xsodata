@@ -3,6 +3,27 @@
 
 service  { 
       "SYSTEM"."PurchasesOrders.data::PO.Product"  // products table
-      as "Product";                                // alias
-      // key ("PRODUCTID")                            // KEY
+           as "Product";                           // alias
+      // key ("PRODUCTID")                         // KEY
+      
+      "SYSTEM"."PurchasesOrders.data::PO.Header"
+           as "Header"
+           navigates ("TolineItemsAssociation" as "TolineItems")
+           aggregates always ( SUM of "GROSSAMOUNT",
+                               MAX of "NETAMOUNT",
+                               AVG of "TAXAMOUNT" );
+                               
+      "SYSTEM"."PurchasesOrders.data::PO.Item"  
+           as "Item" 
+           navigates ("TolineHeaderAssociation" as "TolineHeader")               
+           aggregates always ( SUM of "GROSSAMOUNT",
+                               MAX of "NETAMOUNT",
+                               AVG of "TAXAMOUNT" );
+      
+      association "TolineItemsAssociation" principal "Header"("PURCHASEORDERID")
+                  multiplicity "1" dependent         "Item"("PURCHASEORDERID") multiplicity "*";
+      
+      association "TolineHeaderAssociation" principal "Item"("PURCHASEORDERID")
+                  multiplicity "1" dependent          "Header"("PURCHASEORDERID") multiplicity "1";            
+                  
 }  
