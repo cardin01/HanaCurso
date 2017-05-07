@@ -1,0 +1,19 @@
+role PurchasesOrders.roles::model_access {
+
+// schema privileges
+catalog schema "_SYS_BIC" : SELECT, EXECUTE;
+catalog schema "_SYS_REPO" : SELECT, EXECUTE;
+
+// system privileges
+system privilege : BACKUP ADMIN, USER ADMIN;
+
+application privilege : PurchasesOrders::Execute, PurchasesOrders::Admin;
+
+ // TABLES
+sql object PurchasesOrders.data::PO.Header  : SELECT;
+sql object PurchasesOrders.data::PO.Item    : SELECT;
+sql object PurchasesOrders.data::PO.Partner : SELECT;
+sql object PurchasesOrders.data::PO.Product : SELECT;
+sql object PurchasesOrders.data::PO.User    : SELECT;
+
+}
